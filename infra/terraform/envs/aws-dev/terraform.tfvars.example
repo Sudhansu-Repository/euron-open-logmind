@@ -1,0 +1,27 @@
+# Copy to terraform.tfvars (git-ignored) and replace every placeholder.
+region      = "us-east-1"
+name_prefix = "acme-logmind-dev" # the bucket name derives from this: make it globally unique
+
+hostname        = "logmind-dev.example.com"
+certificate_arn = "<ACM_CERTIFICATE_ARN>"    # same region, covering hostname
+route53_zone_id = "<ROUTE53_HOSTED_ZONE_ID>" # or remove and CNAME hostname to load_balancer_dns_name
+
+# Alert rule notification mail (SES). New accounts start in the SES sandbox: request
+# production access.
+mail_domain       = "logmind-dev.example.com"
+mail_from_address = "alerts@logmind-dev.example.com"
+# mail_from_name  = "Acme LogMind" # MAIL_FROM becomes "Acme LogMind <alerts@...>"
+
+# The image tag pushed to the ecr_repositories output (git commit or release).
+# scripts/aws-deploy.sh passes it on the command line instead.
+image_tag = "0.1.0"
+
+# alarm_email           = "oncall@example.com"
+# metrics_allowed_cidrs = ["203.0.113.10/32"] # your Prometheus egress address
+
+# ClickHouse log store on EC2 (modules/clickhouse).
+# clickhouse_instance_type  = "m6i.large"
+# clickhouse_data_volume_gb = 50
+
+# Extra non-secret settings (apps/api/src/logmind/core/config.py).
+# api_extra_environment = { SESSION_TTL_HOURS = "8", LOGIN_ATTEMPTS_PER_MINUTE = "5" }

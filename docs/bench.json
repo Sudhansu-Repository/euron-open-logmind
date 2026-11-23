@@ -1,0 +1,22 @@
+{
+  "at": "2026-11-17T04:53:01+00:00",
+  "lines_stored": 40000,
+  "ingest": {
+    "batch_size": 500,
+    "sequential_lines_per_s": 1512,
+    "batch_latency_ms_p50": 181.2,
+    "batch_latency_ms_p95": 1417.4,
+    "concurrency": 4,
+    "concurrent_lines_per_s": 1969
+  },
+  "query_ms_p50": {
+    "keyword": 82.1,
+    "filtered": 53.3,
+    "histogram": 56.1
+  },
+  "query_ms_p95": {
+    "keyword": 439.7,
+    "filtered": 630.4,
+    "histogram": 1525.0
+  }
+}

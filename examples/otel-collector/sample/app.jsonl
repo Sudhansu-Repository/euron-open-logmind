@@ -1,0 +1,5 @@
+{"level":"info","msg":"worker started","queue":"invoices","concurrency":4}
+{"level":"info","msg":"invoice rendered","invoice_id":"INV-20931","duration_ms":182}
+{"level":"warn","msg":"retrying email delivery","invoice_id":"INV-20931","attempt":2}
+{"level":"error","msg":"email delivery failed: connection reset by peer","invoice_id":"INV-20931","smtp_host":"mail.example.test"}
+{"level":"info","msg":"invoice queued for retry","invoice_id":"INV-20931","delay_s":60}

@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="320" viewBox="0 0 1280 320" role="img" aria-labelledby="t d">
+  <title id="t">Euron Open LogMind</title>
+  <desc id="d">Self-hosted log intelligence: collect, search and group logs, and ask an AI investigator for a root cause that cites real stored log lines.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0b1220"/>
+      <stop offset="1" stop-color="#10213a"/>
+    </linearGradient>
+    <linearGradient id="glow" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#38bdf8" stop-opacity="0.35"/>
+      <stop offset="1" stop-color="#38bdf8" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <rect width="1280" height="320" rx="24" fill="url(#bg)"/>
+  <rect x="0" y="0" width="1280" height="6" fill="url(#glow)"/>
+  <g font-family="Inter, ui-sans-serif, system-ui, sans-serif">
+    <g transform="translate(72 78)">
+      <rect width="44" height="44" rx="12" fill="#0ea5e9"/>
+      <path d="M12 14h20M12 22h14M12 30h18" stroke="#f0f9ff" stroke-width="3.2" stroke-linecap="round"/>
+      <circle cx="33" cy="22" r="3.5" fill="#fde68a"/>
+    </g>
+    <text x="132" y="108" fill="#bae6fd" font-size="18" font-weight="600" letter-spacing="0.4">EURON OPEN</text>
+    <text x="72" y="172" fill="#f0f9ff" font-size="54" font-weight="650" letter-spacing="-1.2">Euron Open LogMind</text>
+    <text x="74" y="214" fill="#7dd3fc" font-size="21" font-weight="400">Ask your logs why it broke. Get an answer that cites the lines.</text>
+    <text x="74" y="258" fill="#94a3b8" font-size="16">Self-hosted  ·  ClickHouse log store  ·  OTLP ingestion  ·  error grouping  ·  alerts  ·  MIT</text>
+    <g transform="translate(860 44)">
+      <rect width="348" height="232" rx="16" fill="#0f1b2e" stroke="#1e3a5f"/>
+      <text x="18" y="30" fill="#e0f2fe" font-size="13" font-weight="600">Investigation: PaymentGatewayTimeout</text>
+      <g font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="10.5">
+        <rect x="16" y="46" width="316" height="22" rx="6" fill="#132a44"/>
+        <text x="26" y="61" fill="#7dd3fc">E1</text><text x="50" y="61" fill="#cbd5e1">payments  deploy v2.14.0 started</text>
+        <rect x="16" y="74" width="316" height="22" rx="6" fill="#2a2211"/>
+        <text x="26" y="89" fill="#fbbf24">E2</text><text x="50" y="89" fill="#cbd5e1">payments  connection pool exhausted x37</text>
+        <rect x="16" y="102" width="316" height="22" rx="6" fill="#2c1418"/>
+        <text x="26" y="117" fill="#fb7185">E3</text><text x="50" y="117" fill="#cbd5e1">checkout  upstream timed out x212</text>
+      </g>
+      <text x="18" y="152" fill="#94a3b8" font-size="10.5" font-weight="600" letter-spacing="0.6">ROOT CAUSE</text>
+      <text x="18" y="172" fill="#e2e8f0" font-size="11.5">The v2.14.0 deploy exhausted the payments</text>
+      <text x="18" y="189" fill="#e2e8f0" font-size="11.5">DB pool; checkout timed out downstream.</text>
+      <text x="18" y="214" fill="#38bdf8" font-size="10.5">cites E1 E2 E3  ·  3 of 3 verified  ·  1.2k tokens</text>
+    </g>
+  </g>
+</svg>

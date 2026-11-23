@@ -1,0 +1,100 @@
+[project]
+name = "logmind"
+version = "0.1.0"
+description = "Euron Open LogMind: a self-hosted log intelligence platform with evidence-cited AI root cause analysis."
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.12,<3.14"
+dependencies = [
+  "fastapi>=0.115,<1",
+  "uvicorn[standard]>=0.32",
+  "pydantic>=2.9",
+  "pydantic-settings>=2.6",
+  "sqlalchemy[asyncio]>=2.0.36",
+  "asyncpg>=0.30",
+  "alembic>=1.14",
+  "redis>=5.2",
+  "httpx>=0.28",
+  "argon2-cffi>=23.1",
+  "pyjwt>=2.10",
+  "boto3>=1.35",
+  "cryptography>=43",
+  "prometheus-client>=0.21",
+  "opentelemetry-api>=1.28",
+  "opentelemetry-sdk>=1.28",
+  "opentelemetry-exporter-otlp-proto-http>=1.28",
+  "orjson>=3.10",
+  "opentelemetry-proto>=1.28",
+  "protobuf>=5.28",
+]
+
+[project.scripts]
+logmind = "logmind.cli:main"
+
+[dependency-groups]
+dev = [
+  "pytest>=8.3",
+  "pytest-asyncio>=0.24",
+  "pytest-cov>=6.0",
+  "ruff>=0.8",
+  "mypy>=1.13",
+  "boto3-stubs[s3,kms,ses]>=1.35",
+  "asgi-lifespan>=2.1",
+  "pyyaml>=6.0",
+  "types-pyyaml>=6.0",
+  "httpx-ws>=0.9.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/logmind", "src/mockai"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "N", "UP", "B", "S", "A", "C4", "SIM", "RUF", "ASYNC", "PT"]
+ignore = ["S101", "B008", "RUF012"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["S105", "S106", "S311", "E501", "PT018", "PT022", "PT011", "S110"]
+"src/logmind/migrations/**" = ["E501", "UP", "I"]
+"src/mockai/**" = ["E501", "S"]
+"src/logmind/demo/**" = ["E501", "S311"]
+# Log queries are assembled from fixed clause strings; every value is bound as a ClickHouse
+# query parameter ({name:Type}), never interpolated (see the module docstrings).
+"src/logmind/logs/repository.py" = ["S608"]
+"src/logmind/core/clickhouse_schema.py" = ["S608"]
+
+[tool.mypy]
+strict = true
+python_version = "3.12"
+mypy_path = "src"
+plugins = ["pydantic.mypy"]
+
+[[tool.mypy.overrides]]
+module = ["asgi_lifespan.*", "httpx_ws.*"]
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "session"
+asyncio_default_test_loop_scope = "session"
+testpaths = ["tests"]
+markers = ["integration: needs Postgres, Redis, ClickHouse and the mock AI service (make test-integration)"]
+addopts = "-ra"
+
+[tool.coverage.run]
+source = ["logmind"]
+branch = true
+concurrency = ["greenlet", "thread"]
+omit = ["*/migrations/*", "*/demo/*"]
+
+[tool.coverage.report]
+skip_empty = true
+show_missing = true

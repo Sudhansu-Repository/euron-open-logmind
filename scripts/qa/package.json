@@ -1,0 +1,15 @@
+{
+  "name": "@logmind/qa",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Browser QA sweep and curated screenshots for the LogMind web app (make qa, make screenshots).",
+  "type": "module",
+  "packageManager": "pnpm@9.15.0",
+  "scripts": {
+    "qa": "node qa.mjs",
+    "screenshots": "node screenshots.mjs"
+  },
+  "dependencies": {
+    "puppeteer": "24.25.0"
+  }
+}

@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="360" viewBox="0 0 1200 360" role="img" aria-labelledby="t d">
+  <title id="t">How an AI investigation stays grounded</title>
+  <desc id="d">Evidence is retrieved from ClickHouse, compressed into a numbered pack, sent to the model, and every citation in the answer is validated and can be re-verified against stored logs.</desc>
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0 0L10 5L0 10z" fill="#64748b"/>
+    </marker>
+  </defs>
+  <rect width="1200" height="360" fill="#f8fafc"/>
+  <g font-family="Inter, ui-sans-serif, system-ui, sans-serif" font-size="12.5">
+    <text x="40" y="40" font-size="18" font-weight="650" fill="#0f172a">From an error group to a cited, verifiable root cause</text>
+    <g>
+      <rect x="40" y="80" width="200" height="200" rx="14" fill="#fff7ed"/>
+      <text x="56" y="106" font-size="14" font-weight="650" fill="#9a3412">1. Retrieve</text>
+      <text x="56" y="132" fill="#0f172a">incident start (burst)</text>
+      <text x="56" y="152" fill="#0f172a">first and latest failure</text>
+      <text x="56" y="172" fill="#0f172a">earlier warnings, errors</text>
+      <text x="56" y="192" fill="#0f172a">correlated errors</text>
+      <text x="56" y="212" fill="#0f172a">deploys, config changes</text>
+      <text x="56" y="232" fill="#0f172a">same trace or request</text>
+      <text x="56" y="262" font-size="11.5" fill="#9a3412">e.g. 7,000 lines in window</text>
+    </g>
+    <g>
+      <rect x="280" y="80" width="200" height="200" rx="14" fill="#e0f2fe"/>
+      <text x="296" y="106" font-size="14" font-weight="650" fill="#075985">2. Compress</text>
+      <text x="296" y="132" fill="#0f172a">group by message template</text>
+      <text x="296" y="152" fill="#0f172a">48 pool warnings: 1 item</text>
+      <text x="296" y="172" fill="#0f172a">rank, dedupe, cut</text>
+      <text x="296" y="192" fill="#0f172a">40 items, 3,000 tokens</text>
+      <text x="296" y="212" fill="#0f172a">number E1..En by time</text>
+      <text x="296" y="262" font-size="11.5" fill="#075985">e.g. 30 items, about 1k tokens</text>
+    </g>
+    <g>
+      <rect x="520" y="80" width="200" height="200" rx="14" fill="#faf5ff"/>
+      <text x="536" y="106" font-size="14" font-weight="650" fill="#6b21a8">3. Ask the model</text>
+      <text x="536" y="132" fill="#0f172a">cite ids, never quote</text>
+      <text x="536" y="152" fill="#0f172a">root cause, findings,</text>
+      <text x="536" y="172" fill="#0f172a">timeline, next steps</text>
+      <text x="536" y="192" fill="#0f172a">tokens recorded</text>
+      <text x="536" y="262" font-size="11.5" fill="#6b21a8">any provider, or the mock</text>
+    </g>
+    <g>
+      <rect x="760" y="80" width="200" height="200" rx="14" fill="#ecfdf5"/>
+      <text x="776" y="106" font-size="14" font-weight="650" fill="#065f46">4. Validate</text>
+      <text x="776" y="132" fill="#0f172a">unknown ids rejected</text>
+      <text x="776" y="152" fill="#0f172a">uncited statements</text>
+      <text x="776" y="172" fill="#0f172a">removed and listed</text>
+      <text x="776" y="192" fill="#0f172a">times from cited lines</text>
+      <text x="776" y="212" fill="#0f172a">line snapshots stored</text>
+    </g>
+    <g>
+      <rect x="1000" y="80" width="160" height="200" rx="14" fill="#ffffff" stroke="#e2e8f0"/>
+      <text x="1016" y="106" font-size="14" font-weight="650" fill="#0f172a">5. Verify</text>
+      <text x="1016" y="132" fill="#0f172a">re-read each cited</text>
+      <text x="1016" y="152" fill="#0f172a">line from ClickHouse</text>
+      <text x="1016" y="172" fill="#0f172a">compare time and text</text>
+      <text x="1016" y="212" fill="#0f172a">follow-ups: same pack,</text>
+      <text x="1016" y="232" fill="#0f172a">more earlier evidence</text>
+    </g>
+    <g stroke="#64748b" stroke-width="1.6" fill="none" marker-end="url(#a)">
+      <path d="M240 180H276"/>
+      <path d="M480 180H516"/>
+      <path d="M720 180H756"/>
+      <path d="M960 180H996"/>
+    </g>
+    <text x="40" y="320" font-size="12" fill="#64748b">Search, grouping, services and alerts never call a model. Investigations are optional and every claim they show points at a real stored line.</text>
+  </g>
+</svg>

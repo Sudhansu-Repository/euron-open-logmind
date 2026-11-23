@@ -1,0 +1,52 @@
+#!/bin/bash
+# ClickHouse on Amazon Linux 2023 (rendered by the clickhouse Terraform module).
+# Runs once, on first boot. The data volume may still be attaching, so wait for it.
+set -euo pipefail
+
+dnf install -y docker
+systemctl enable --now docker
+
+for _ in $(seq 1 120); do [ -b "${device}" ] && break; sleep 5; done
+[ -b "${device}" ] || { echo "data volume ${device} never appeared" >&2; exit 1; }
+# Format only a blank volume: a replacement instance mounts the existing data.
+blkid "${device}" >/dev/null 2>&1 || mkfs.xfs "${device}"
+mkdir -p /var/lib/clickhouse
+uuid="$(blkid -s UUID -o value "${device}")"
+grep -q "$uuid" /etc/fstab || echo "UUID=$uuid /var/lib/clickhouse xfs defaults,nofail,noatime 0 2" >> /etc/fstab
+mountpoint -q /var/lib/clickhouse || mount /var/lib/clickhouse
+
+# The application user, by password hash only. The default user keeps its empty
+# password but only from inside the container (the image's entrypoint uses it to
+# create the database on first start).
+mkdir -p /etc/clickhouse/users.d
+cat > /etc/clickhouse/users.d/logmind.xml <<'XML'
+<clickhouse>
+  <users>
+    <default>
+      <networks replace="replace">
+        <ip>::1</ip>
+        <ip>127.0.0.1</ip>
+      </networks>
+    </default>
+    <${user}>
+      <password_sha256_hex>${password_sha256}</password_sha256_hex>
+      <networks>
+        <ip>::/0</ip>
+      </networks>
+      <profile>default</profile>
+      <quota>default</quota>
+    </${user}>
+  </users>
+</clickhouse>
+XML
+chmod 0644 /etc/clickhouse/users.d/logmind.xml
+
+docker rm -f clickhouse >/dev/null 2>&1 || true
+docker run -d --name clickhouse --restart unless-stopped \
+  --ulimit nofile=262144:262144 \
+  -p ${port}:8123 \
+  -e CLICKHOUSE_DB=${database} \
+  -e CLICKHOUSE_SKIP_USER_SETUP=1 \
+  -v /var/lib/clickhouse:/var/lib/clickhouse \
+  -v /etc/clickhouse/users.d/logmind.xml:/etc/clickhouse-server/users.d/logmind.xml:ro \
+  "${image}"

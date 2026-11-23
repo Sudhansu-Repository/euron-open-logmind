@@ -1,0 +1,81 @@
+# OpenTelemetry Collector pipeline that ships logs to Euron Open LogMind.
+#
+# Two sources, each in its own logs pipeline, share one exporter:
+#   - otlp:    any app instrumented with an OpenTelemetry SDK (gRPC :4317, HTTP :4318)
+#   - filelog: tails JSON log files (here ./sample/*.jsonl) and parses each line
+#
+# The otlphttp exporter posts OTLP/HTTP protobuf to LogMind's /v1/logs endpoint with the
+# project API key from the LOGMIND_API_KEY environment variable.
+# Requires the "contrib" distribution (otelcol-contrib) for the filelog receiver.
+
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+      http:
+        endpoint: 0.0.0.0:4318
+
+  filelog:
+    include: [./sample/*.jsonl]
+    start_at: beginning
+    include_file_name: true
+    operators:
+      # Each line is a JSON object: {"level": "...", "msg": "...", "time": "..." (optional), ...}
+      - type: json_parser
+        parse_from: body
+        parse_to: attributes
+        severity:
+          parse_from: attributes.level
+      # Lines with a "time" key keep it; the others get the time they were read. LogMind
+      # rejects timestamps more than 30 days old by default (MAX_PAST_DAYS on the API).
+      - type: time_parser
+        if: 'attributes.time != nil'
+        parse_from: attributes.time
+        layout_type: gotime
+        layout: "2006-01-02T15:04:05.000Z07:00"
+      - type: remove
+        if: 'attributes.time != nil'
+        field: attributes.time
+      # Use the message as the log body and keep every other key as an attribute.
+      - type: move
+        from: attributes.msg
+        to: body
+      - type: remove
+        field: attributes.level
+
+processors:
+  # Tag every line from the file with its service and environment.
+  resource/filelog:
+    attributes:
+      - key: service.name
+        value: billing-worker
+        action: upsert
+      - key: deployment.environment
+        value: development
+        action: upsert
+  batch:
+    send_batch_size: 500
+    timeout: 2s
+
+exporters:
+  otlphttp/logmind:
+    logs_endpoint: http://localhost:6030/v1/logs
+    headers:
+      Authorization: "Bearer ${env:LOGMIND_API_KEY}"
+    compression: gzip
+    retry_on_failure:
+      enabled: true
+    sending_queue:
+      enabled: true
+
+service:
+  pipelines:
+    logs/otlp:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [otlphttp/logmind]
+    logs/files:
+      receivers: [filelog]
+      processors: [resource/filelog, batch]
+      exporters: [otlphttp/logmind]
